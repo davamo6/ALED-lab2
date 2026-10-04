@@ -64,6 +64,7 @@ public class SkeletonVisualizer {
 		// Load motion sequence from file
 		if (args.length > 0) {
 			try {
+				//Comentarios:
 				// Load frame
 				List<double[]> frames = FileUtils.loadMotion(args[0]);
 				// Run animation
