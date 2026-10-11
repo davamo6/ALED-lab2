@@ -26,11 +26,48 @@ public class ForwardKinematics {
 	 */
 	// Public method: returns the root of the position tree
 	public static Node computePositions(Segment root, double originX, double originY) {
-		// TODO: Implemente este método
+		// Llamada al método privado recursivo pasando un accumulatedAngle inicial de 0.0
+		return computePositions(root, originX, originY, 0.0);
 	}
 
 	// Private helper method that implements the recursive algorithm
 	private static Node computePositions(Segment link, double baseX, double baseY, double accumulatedAngle) {
-		// TODO: Implemente este método
+		// ------------------------------------------------------------------------
+	    // 1. CÁLCULOS GEOMÉTRICOS PARA EL NODO ACTUAL
+	    // ------------------------------------------------------------------------
+		// Sumamos el ángulo del segmento actual al ángulo acumulado que viene de los padres
+		double accumulatedAngleActual = accumulatedAngle + link.getAngle();
+		
+		// Calculamos las coordenadas del extremo final del segmento actual usando trigonometría
+		double finalX = baseX + link.getLength() * Math.cos(accumulatedAngleActual);
+		double finalY = baseY + link.getLength() * Math.sin(accumulatedAngleActual);
+		
+		// Creamos el nodo resultante que representa la posición calculada
+		Node nodoActual = new Node(finalX, finalY);
+		
+		// ------------------------------------------------------------------------
+	    // 2. CASO BASE: EL SEGMENTO NO TIENE HIJOS (ES UNA HOJA DEL ÁRBOL)
+	    // ------------------------------------------------------------------------
+		if(link.getChildren().isEmpty()) {
+			//Devolvemos el nodo actual sin hijos
+			return nodoActual;
+		}
+		
+		// ------------------------------------------------------------------------
+	    // 3. PASO RECURSIVO: RECORRIDO DE LOS HIJOS
+	    // ------------------------------------------------------------------------
+		for(Segment childSegment: link.getChildren()) {
+			// Llamada recursiva pasando:
+	        // - childSegment: el segmento hijo actual
+	        // - endX, endY: las coordenadas recién calculadas que sirven de base para el hijo
+	        // - currentAccumulatedAngle: el nuevo ángulo acumulado actualizado
+			Node childNode = computePositions(childSegment, finalX, finalY, accumulatedAngleActual);
+			
+			// Añadimos el Node resultante a la lista de hijos del Node actual
+			nodoActual.addChild(childNode);
+		}
+		
+		// Retornamos el nodo actual junto con toda su jerarquía de hijos procesada
+		return nodoActual;
 	}
 }
